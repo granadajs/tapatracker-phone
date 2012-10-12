@@ -1,0 +1,8 @@
+.container {
+  width: 100%;
+  color: red; }
+  .container h2 {
+    font-size: 23px; }
+  .container ul#projects li.project {
+    color: red;
+    background-color: #fff; }
