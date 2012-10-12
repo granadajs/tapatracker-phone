@@ -2,7 +2,7 @@
 //= require ./vendor/underscore-min
 //= require ./vendor/backbone-min
 //= require_self
-//= require index
+//= require ./backbone/app
 
 window.App ?= {}
 
