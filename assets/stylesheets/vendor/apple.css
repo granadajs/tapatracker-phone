@@ -568,7 +568,6 @@ $media-query-width-small: 480px;
  * Defaults to `matte`.
  */
 /* line 41, ../compass-recipes/stylesheets/recipes/_webfont-icon.scss */
-
 .webfont-icon-base {
   color: transparent;
   -webkit-background-clip: text;
@@ -1970,6 +1969,3 @@ body {
   color: #4c566c;
   border-top: 1px solid rgba(76, 86, 108, 0.3);
 }
-
-
-

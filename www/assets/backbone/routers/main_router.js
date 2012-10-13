@@ -18,6 +18,7 @@
     };
 
     MainRouter.prototype.index = function() {
+      alert('tapas');
       App.session = new App.Session;
       if (App.session && App.session.isSignedIn()) {
         return this.navigate('tapas', {

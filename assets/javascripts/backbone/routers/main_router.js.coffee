@@ -6,6 +6,7 @@ class App.MainRouter extends Backbone.Router
     "tapas":   "tapas"
 
   index: ->
+    alert('tapas')
     App.session = new App.Session
     if App.session && App.session.isSignedIn()
       @navigate('tapas', trigger: true)

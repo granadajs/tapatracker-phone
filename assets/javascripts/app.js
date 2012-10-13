@@ -1,13 +1,14 @@
-//= require ./vendor/jquery.min
+//= require ./vendor/zepto.min
 //= require ./vendor/underscore-min
 //= require ./vendor/backbone-min
+//= require ./vendor/jqtouch.min
 //= require_self
 //= require ./backbone/app
 
 window.App = window.App || {};
 
 window.App.init = function () {
-  jQuery(function () {
+  $(function () {
     window.mainRouter = new App.MainRouter;
     Backbone.history.start();
   });
@@ -26,3 +27,4 @@ App.PhoneGap.prototype.bindEvents = function () {
 App.PhoneGap.prototype.onDeviceReady = function () {
   App.init();
 }
+App.init();

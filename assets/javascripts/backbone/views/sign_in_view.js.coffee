@@ -1,7 +1,7 @@
 class App.SignInView extends Backbone.View
 
   events:
-    "click input[type='submit']": 'signIn'
+    "tap input[type='submit']": 'signIn'
 
   template: JST['backbone/templates/sign_in']
 
@@ -20,6 +20,7 @@ class App.SignInView extends Backbone.View
     password = $form.find('input[name="password"]').val()
     res = @model.checkLogin(uid, password)
     res.done (data) =>
+      alert(data)
       tokenObj = JSON.parse data
       @model.createUserSession(uid, tokenObj.token)
       @options.router.navigate('tapas', trigger: true)

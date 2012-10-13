@@ -291,7 +291,7 @@
     }
 
     SignInView.prototype.events = {
-      "click input[type='submit']": 'signIn'
+      "tap input[type='submit']": 'signIn'
     };
 
     SignInView.prototype.template = JST['backbone/templates/sign_in'];
@@ -317,6 +317,7 @@
       res = this.model.checkLogin(uid, password);
       res.done(function(data) {
         var tokenObj;
+        alert(data);
         tokenObj = JSON.parse(data);
         _this.model.createUserSession(uid, tokenObj.token);
         return _this.options.router.navigate('tapas', {
@@ -445,6 +446,7 @@
     };
 
     MainRouter.prototype.index = function() {
+      alert('tapas');
       App.session = new App.Session;
       if (App.session && App.session.isSignedIn()) {
         return this.navigate('tapas', {
