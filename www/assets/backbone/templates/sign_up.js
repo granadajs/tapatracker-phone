@@ -1,6 +1,6 @@
 (function() {
   this.JST || (this.JST = {});
-  this.JST["backbone/templates/sign_in"] = function(__obj) {
+  this.JST["backbone/templates/sign_up"] = function(__obj) {
     if (!__obj) __obj = {};
     var __out = [], __capture = function(callback) {
       var out = __out, result;
@@ -40,7 +40,7 @@
     (function() {
       (function() {
       
-        __out.push('<h1>TapaTracker</h1>\n<form method="post">\n  <label for="uid">Username</label>\n  <input type="text" id="uid" name="uid">\n  <label for="password">Password</label>\n  <input type="password" name="password">\n  <div class="clearfix">\n    <input type="submit" class="btn">\n  </div>\n</form>\n\n<p>\n  Or <a href="#/sign_up">Sign up</a>!\n</p>\n\n');
+        __out.push('<h1>TapaTracker</h1>\n<form method="post">\n  <fieldset>\n    <legend>Sign Up</legend>\n    <label for="username">Username</label>\n    <input type="text" id="username" name="username">\n    <label for="email">Email</label>\n    <input type="text" id="email" name="email">\n    <label for="password">Password</label>\n    <input type="password" name="password">\n    <label for="password_confirmation">Password Confirmation</label>\n    <input type="password" id="password_confirmation" name="password_confirmation">\n    <div class="clearfix">\n      <input type="submit" class="btn">\n    </div>\n  </fieldset>\n</form>\n\n');
       
       }).call(this);
       

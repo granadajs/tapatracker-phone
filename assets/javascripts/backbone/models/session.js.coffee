@@ -1,5 +1,5 @@
 class App.Session extends Backbone.Model
-  url: "http://localhost:3000/api/users/sign_in"
+  url: "http://localhost:3000/api/sessions"
 
   # Returns the token if true, null is false
   isSignedIn: ->

@@ -10,7 +10,7 @@
       return Session.__super__.constructor.apply(this, arguments);
     }
 
-    Session.prototype.url = "http://localhost:3000/api/users/sign_in";
+    Session.prototype.url = "http://localhost:3000/api/sessions";
 
     Session.prototype.isSignedIn = function() {
       return App.Persistence.getToken();

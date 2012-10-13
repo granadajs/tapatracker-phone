@@ -3,6 +3,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   App.MainRouter = (function(_super) {
+    var view;
 
     __extends(MainRouter, _super);
 
@@ -12,6 +13,7 @@
 
     MainRouter.prototype.routes = {
       "": "index",
+      "sign_up": "signUp",
       "sign_in": "signIn"
     };
 
@@ -30,14 +32,26 @@
       }
     };
 
-    MainRouter.prototype.signIn = function() {
+    MainRouter.prototype.signUp = function() {
       var view;
-      App.session = new App.Session;
-      view = new App.SignInView({
-        session: App.session
+      App.user = new App.User;
+      view = new App.SignUpView({
+        model: App.user
       });
       return $('.container').html(view.render().el);
     };
+
+    MainRouter.prototype.signIn = function() {
+      return alert("foo");
+    };
+
+    App.session = new App.Session;
+
+    view = new App.SignInView({
+      model: App.session
+    });
+
+    $('.container').html(view.render().el);
 
     return MainRouter;
 

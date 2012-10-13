@@ -1,0 +1,18 @@
+<h1>TapaTracker</h1>
+<form method="post">
+  <fieldset>
+    <legend>Sign Up</legend>
+    <label for="username">Username</label>
+    <input type="text" id="username" name="username">
+    <label for="email">Email</label>
+    <input type="text" id="email" name="email">
+    <label for="password">Password</label>
+    <input type="password" name="password">
+    <label for="password_confirmation">Password Confirmation</label>
+    <input type="password" id="password_confirmation" name="password_confirmation">
+    <div class="clearfix">
+      <input type="submit" class="btn">
+    </div>
+  </fieldset>
+</form>
+
