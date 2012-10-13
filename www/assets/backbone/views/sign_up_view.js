@@ -43,7 +43,9 @@
         password_confirmation: confirmation
       });
       res.done(function(data) {
-        return _this.options.router.navigate('tapas');
+        return _this.options.router.navigate('tapas', {
+          trigger: true
+        });
       });
       return res.error(function(err) {
         return console.log("error", err.statusText);

@@ -26,4 +26,3 @@ App.PhoneGap.prototype.bindEvents = function () {
 App.PhoneGap.prototype.onDeviceReady = function () {
   App.init();
 }
-App.init();

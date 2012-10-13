@@ -39,7 +39,9 @@
         var tokenObj;
         tokenObj = JSON.parse(data);
         _this.model.createUserSession(uid, tokenObj.token);
-        return _this.options.router.navigate('tapas');
+        return _this.options.router.navigate('tapas', {
+          trigger: true
+        });
       });
       return res.error(function(err) {
         return alert(err.statusText);

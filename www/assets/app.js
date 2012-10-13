@@ -72,7 +72,7 @@ App.PhoneGap.prototype.bindEvents = function () {
 App.PhoneGap.prototype.onDeviceReady = function () {
   App.init();
 }
-App.init();
+;
 (function() {
   this.JST || (this.JST = {});
   this.JST["backbone/templates/sign_in"] = function(__obj) {
@@ -394,7 +394,9 @@ App.init();
         var tokenObj;
         tokenObj = JSON.parse(data);
         _this.model.createUserSession(uid, tokenObj.token);
-        return _this.options.router.navigate('tapas');
+        return _this.options.router.navigate('tapas', {
+          trigger: true
+        });
       });
       return res.error(function(err) {
         return alert(err.statusText);
@@ -451,7 +453,9 @@ App.init();
         password_confirmation: confirmation
       });
       res.done(function(data) {
-        return _this.options.router.navigate('tapas');
+        return _this.options.router.navigate('tapas', {
+          trigger: true
+        });
       });
       return res.error(function(err) {
         return console.log("error", err.statusText);
@@ -510,17 +514,21 @@ App.init();
 
     MainRouter.prototype.routes = {
       "": "index",
-      "sign_up": "signUp",
       "sign_in": "signIn",
+      "sign_up": "signUp",
       "tapas": "tapas"
     };
 
     MainRouter.prototype.index = function() {
       App.session = new App.Session;
       if (App.session && App.session.isSignedIn()) {
-        return this.navigate('tapas');
+        return this.navigate('tapas', {
+          trigger: true
+        });
       } else {
-        return this.navigate('sign_in');
+        return this.navigate('sign_in', {
+          trigger: true
+        });
       }
     };
 

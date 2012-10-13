@@ -1,16 +1,16 @@
 class App.MainRouter extends Backbone.Router
   routes:
     "":        "index"
-    "sign_up": "signUp"
     "sign_in": "signIn"
+    "sign_up": "signUp"
     "tapas":   "tapas"
 
   index: ->
     App.session = new App.Session
     if App.session && App.session.isSignedIn()
-      @navigate('tapas')
+      @navigate('tapas', trigger: true)
     else
-      @navigate('sign_in')
+      @navigate('sign_in', trigger: true)
 
   signIn: ->
     App.session = new App.Session

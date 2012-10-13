@@ -319,7 +319,9 @@
         var tokenObj;
         tokenObj = JSON.parse(data);
         _this.model.createUserSession(uid, tokenObj.token);
-        return _this.options.router.navigate('tapas');
+        return _this.options.router.navigate('tapas', {
+          trigger: true
+        });
       });
       return res.error(function(err) {
         return alert(err.statusText);
@@ -376,7 +378,9 @@
         password_confirmation: confirmation
       });
       res.done(function(data) {
-        return _this.options.router.navigate('tapas');
+        return _this.options.router.navigate('tapas', {
+          trigger: true
+        });
       });
       return res.error(function(err) {
         return console.log("error", err.statusText);
@@ -435,17 +439,21 @@
 
     MainRouter.prototype.routes = {
       "": "index",
-      "sign_up": "signUp",
       "sign_in": "signIn",
+      "sign_up": "signUp",
       "tapas": "tapas"
     };
 
     MainRouter.prototype.index = function() {
       App.session = new App.Session;
       if (App.session && App.session.isSignedIn()) {
-        return this.navigate('tapas');
+        return this.navigate('tapas', {
+          trigger: true
+        });
       } else {
-        return this.navigate('sign_in');
+        return this.navigate('sign_in', {
+          trigger: true
+        });
       }
     };
 

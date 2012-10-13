@@ -22,6 +22,6 @@ class App.SignInView extends Backbone.View
     res.done (data) =>
       tokenObj = JSON.parse data
       @model.createUserSession(uid, tokenObj.token)
-      @options.router.navigate('tapas')
+      @options.router.navigate('tapas', trigger: true)
     res.error (err) -> alert err.statusText
 

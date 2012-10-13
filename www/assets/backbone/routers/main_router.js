@@ -12,17 +12,21 @@
 
     MainRouter.prototype.routes = {
       "": "index",
-      "sign_up": "signUp",
       "sign_in": "signIn",
+      "sign_up": "signUp",
       "tapas": "tapas"
     };
 
     MainRouter.prototype.index = function() {
       App.session = new App.Session;
       if (App.session && App.session.isSignedIn()) {
-        return this.navigate('tapas');
+        return this.navigate('tapas', {
+          trigger: true
+        });
       } else {
-        return this.navigate('sign_in');
+        return this.navigate('sign_in', {
+          trigger: true
+        });
       }
     };
 
