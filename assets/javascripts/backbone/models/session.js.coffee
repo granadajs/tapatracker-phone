@@ -9,12 +9,14 @@ class App.Session extends Backbone.Model
     App.Persistence.getToken()
 
   createUserSession: (login, token) ->
+    @set("login", login)
+    @set("token", token)
     App.Persistence.createUserSession(login, token)
 
   checkLogin: (uid, password) ->
     $.ajax
       url: @url
-      type: "post"
+      type: "POST"
       data:
         uid:      uid
         password: password

@@ -72,7 +72,7 @@ App.PhoneGap.prototype.bindEvents = function () {
 App.PhoneGap.prototype.onDeviceReady = function () {
   App.init();
 }
-;
+App.init();
 (function() {
   this.JST || (this.JST = {});
   this.JST["backbone/templates/sign_in"] = function(__obj) {
@@ -176,6 +176,70 @@ App.PhoneGap.prototype.onDeviceReady = function () {
   };
 }).call(this);
 (function() {
+  this.JST || (this.JST = {});
+  this.JST["backbone/templates/tapas/index"] = function(__obj) {
+    if (!__obj) __obj = {};
+    var __out = [], __capture = function(callback) {
+      var out = __out, result;
+      __out = [];
+      callback.call(this);
+      result = __out.join('');
+      __out = out;
+      return __safe(result);
+    }, __sanitize = function(value) {
+      if (value && value.ecoSafe) {
+        return value;
+      } else if (typeof value !== 'undefined' && value != null) {
+        return __escape(value);
+      } else {
+        return '';
+      }
+    }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+    __safe = __obj.safe = function(value) {
+      if (value && value.ecoSafe) {
+        return value;
+      } else {
+        if (!(typeof value !== 'undefined' && value != null)) value = '';
+        var result = new String(value);
+        result.ecoSafe = true;
+        return result;
+      }
+    };
+    if (!__escape) {
+      __escape = __obj.escape = function(value) {
+        return ('' + value)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      };
+    }
+    (function() {
+      (function() {
+        var tapa, _i, _len, _ref;
+      
+        __out.push('<h2>Tapas</h2>\n<ul class="tapas">\n  ');
+      
+        _ref = this.tapas.models;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          tapa = _ref[_i];
+          __out.push('\n    <li class="tapa">\n      <img src="');
+          __out.push(__sanitize(tapa.get('image_url')));
+          __out.push('" />\n      <h4>');
+          __out.push(__sanitize(tapa.get('venue').name));
+          __out.push('</h4>\n    </li>\n  ');
+        }
+      
+        __out.push('\n</ul>\n');
+      
+      }).call(this);
+      
+    }).call(__obj);
+    __obj.safe = __objSafe, __obj.escape = __escape;
+    return __out.join('');
+  };
+}).call(this);
+(function() {
 
   App.Persistence = {
     getToken: function() {
@@ -211,13 +275,15 @@ App.PhoneGap.prototype.onDeviceReady = function () {
     };
 
     Session.prototype.createUserSession = function(login, token) {
+      this.set("login", login);
+      this.set("token", token);
       return App.Persistence.createUserSession(login, token);
     };
 
     Session.prototype.checkLogin = function(uid, password) {
       return $.ajax({
         url: this.url,
-        type: "post",
+        type: "POST",
         data: {
           uid: uid,
           password: password
@@ -317,17 +383,21 @@ App.PhoneGap.prototype.onDeviceReady = function () {
     };
 
     SignInView.prototype.signIn = function(e) {
-      var $form, password, res, uid;
+      var $form, password, res, uid,
+        _this = this;
       e.preventDefault();
       $form = this.$el.find('form');
       uid = $form.find('input[name="uid"]').val();
       password = $form.find('input[name="password"]').val();
       res = this.model.checkLogin(uid, password);
       res.done(function(data) {
-        return this.mainRouter.navigate('/');
+        var tokenObj;
+        tokenObj = JSON.parse(data);
+        _this.model.createUserSession(uid, tokenObj.token);
+        return _this.options.router.navigate('tapas');
       });
       return res.error(function(err) {
-        return console.log("error", err.statusText);
+        return alert(err.statusText);
       });
     };
 
@@ -366,7 +436,8 @@ App.PhoneGap.prototype.onDeviceReady = function () {
     };
 
     SignUpView.prototype.signUp = function(e) {
-      var $form, confirmation, email, password, res, username;
+      var $form, confirmation, email, password, res, username,
+        _this = this;
       e.preventDefault();
       $form = this.$el.find('form');
       username = $form.find('input[name="username"]').val();
@@ -380,7 +451,7 @@ App.PhoneGap.prototype.onDeviceReady = function () {
         password_confirmation: confirmation
       });
       res.done(function(data) {
-        return this.mainRouter.navigate('');
+        return _this.options.router.navigate('tapas');
       });
       return res.error(function(err) {
         return console.log("error", err.statusText);
@@ -393,8 +464,36 @@ App.PhoneGap.prototype.onDeviceReady = function () {
 
 }).call(this);
 (function() {
+  var __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
+  App.TapasView = (function(_super) {
 
+    __extends(TapasView, _super);
+
+    function TapasView() {
+      return TapasView.__super__.constructor.apply(this, arguments);
+    }
+
+    TapasView.prototype.template = JST['backbone/templates/tapas/index'];
+
+    TapasView.prototype.initialize = function() {
+      _.bindAll(this, 'render');
+      return this.collection.on('reset', this.render, this);
+    };
+
+    TapasView.prototype.render = function() {
+      var renderedHtml;
+      renderedHtml = this.template({
+        tapas: this.collection
+      });
+      this.$el.html(renderedHtml);
+      return this;
+    };
+
+    return TapasView;
+
+  })(Backbone.View);
 
 }).call(this);
 (function() {
@@ -402,7 +501,6 @@ App.PhoneGap.prototype.onDeviceReady = function () {
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   App.MainRouter = (function(_super) {
-    var view;
 
     __extends(MainRouter, _super);
 
@@ -413,44 +511,48 @@ App.PhoneGap.prototype.onDeviceReady = function () {
     MainRouter.prototype.routes = {
       "": "index",
       "sign_up": "signUp",
-      "sign_in": "signIn"
+      "sign_in": "signIn",
+      "tapas": "tapas"
     };
 
     MainRouter.prototype.index = function() {
-      var tapas, view;
       App.session = new App.Session;
       if (App.session && App.session.isSignedIn()) {
-        tapas = new Tapas;
-        view = new TapasView({
-          collection: tapas
-        });
-        $('.container').html(view.render().el);
-        return tapasView.fetch();
+        return this.navigate('tapas');
       } else {
         return this.navigate('sign_in');
       }
+    };
+
+    MainRouter.prototype.signIn = function() {
+      var view;
+      App.session = new App.Session;
+      view = new App.SignInView({
+        model: App.session,
+        router: this
+      });
+      return $('.container').html(view.render().el);
     };
 
     MainRouter.prototype.signUp = function() {
       var view;
       App.user = new App.User;
       view = new App.SignUpView({
-        model: App.user
+        model: App.user,
+        router: this
       });
       return $('.container').html(view.render().el);
     };
 
-    MainRouter.prototype.signIn = function() {
-      return alert("foo");
+    MainRouter.prototype.tapas = function() {
+      var view;
+      App.tapas = new App.Tapas;
+      view = new App.TapasView({
+        collection: App.tapas
+      });
+      $('.container').html(view.render().el);
+      return App.tapas.fetch();
     };
-
-    App.session = new App.Session;
-
-    view = new App.SignInView({
-      model: App.session
-    });
-
-    $('.container').html(view.render().el);
 
     return MainRouter;
 

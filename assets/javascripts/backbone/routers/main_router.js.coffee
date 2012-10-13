@@ -3,24 +3,27 @@ class App.MainRouter extends Backbone.Router
     "":        "index"
     "sign_up": "signUp"
     "sign_in": "signIn"
+    "tapas":   "tapas"
 
   index: ->
     App.session = new App.Session
     if App.session && App.session.isSignedIn()
-      tapas = new Tapas
-      view  = new TapasView(collection: tapas)
-      $('.container').html(view.render().el)
-      tapasView.fetch()
+      @navigate('tapas')
     else
       @navigate('sign_in')
 
-  signUp: ->
-    App.user = new App.User
-    view = new App.SignUpView(model: App.user)
+  signIn: ->
+    App.session = new App.Session
+    view = new App.SignInView(model: App.session, router: this)
     $('.container').html(view.render().el)
 
-  signIn: ->
-      alert("foo")
-    App.session = new App.Session
-    view = new App.SignInView(model: App.session)
+  signUp: ->
+    App.user = new App.User
+    view = new App.SignUpView(model: App.user, router: this)
     $('.container').html(view.render().el)
+
+  tapas: ->
+    App.tapas = new App.Tapas
+    view  = new App.TapasView(collection: App.tapas)
+    $('.container').html(view.render().el)
+    App.tapas.fetch()

@@ -21,13 +21,15 @@
     };
 
     Session.prototype.createUserSession = function(login, token) {
+      this.set("login", login);
+      this.set("token", token);
       return App.Persistence.createUserSession(login, token);
     };
 
     Session.prototype.checkLogin = function(uid, password) {
       return $.ajax({
         url: this.url,
-        type: "post",
+        type: "POST",
         data: {
           uid: uid,
           password: password

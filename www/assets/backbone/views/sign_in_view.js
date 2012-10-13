@@ -28,17 +28,21 @@
     };
 
     SignInView.prototype.signIn = function(e) {
-      var $form, password, res, uid;
+      var $form, password, res, uid,
+        _this = this;
       e.preventDefault();
       $form = this.$el.find('form');
       uid = $form.find('input[name="uid"]').val();
       password = $form.find('input[name="password"]').val();
       res = this.model.checkLogin(uid, password);
       res.done(function(data) {
-        return this.mainRouter.navigate('/');
+        var tokenObj;
+        tokenObj = JSON.parse(data);
+        _this.model.createUserSession(uid, tokenObj.token);
+        return _this.options.router.navigate('tapas');
       });
       return res.error(function(err) {
-        return console.log("error", err.statusText);
+        return alert(err.statusText);
       });
     };
 

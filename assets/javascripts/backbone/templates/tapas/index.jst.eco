@@ -1,0 +1,9 @@
+<h2>Tapas</h2>
+<ul class="tapas">
+  <% for tapa in @tapas.models: %>
+    <li class="tapa">
+      <img src="<%= tapa.get('image_url') %>" />
+      <h4><%= tapa.get('venue').name %></h4>
+    </li>
+  <% end %>
+</ul>

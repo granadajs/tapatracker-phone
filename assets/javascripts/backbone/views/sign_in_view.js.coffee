@@ -19,6 +19,9 @@ class App.SignInView extends Backbone.View
     uid      = $form.find('input[name="uid"]').val()
     password = $form.find('input[name="password"]').val()
     res = @model.checkLogin(uid, password)
-    res.done (data) -> @mainRouter.navigate('/')
-    res.error (err) -> console.log "error", err.statusText
+    res.done (data) =>
+      tokenObj = JSON.parse data
+      @model.createUserSession(uid, tokenObj.token)
+      @options.router.navigate('tapas')
+    res.error (err) -> alert err.statusText
 

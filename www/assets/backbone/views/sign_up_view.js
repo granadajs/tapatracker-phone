@@ -28,7 +28,8 @@
     };
 
     SignUpView.prototype.signUp = function(e) {
-      var $form, confirmation, email, password, res, username;
+      var $form, confirmation, email, password, res, username,
+        _this = this;
       e.preventDefault();
       $form = this.$el.find('form');
       username = $form.find('input[name="username"]').val();
@@ -42,7 +43,7 @@
         password_confirmation: confirmation
       });
       res.done(function(data) {
-        return this.mainRouter.navigate('');
+        return _this.options.router.navigate('tapas');
       });
       return res.error(function(err) {
         return console.log("error", err.statusText);

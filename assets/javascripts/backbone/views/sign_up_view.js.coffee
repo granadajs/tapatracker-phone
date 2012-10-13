@@ -25,6 +25,6 @@ class App.SignUpView extends Backbone.View
       email:                 email
       password:              password
       password_confirmation: confirmation
-    res.done (data) -> @mainRouter.navigate('')
+    res.done (data) => @options.router.navigate('tapas')
     res.error (err) -> console.log "error", err.statusText
 
