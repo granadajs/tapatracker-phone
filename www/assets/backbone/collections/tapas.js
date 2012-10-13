@@ -16,6 +16,6 @@
 
     return Tapas;
 
-  })(Backbone.Colleciton);
+  })(Backbone.Collection);
 
 }).call(this);

@@ -12,6 +12,29 @@
 
     Session.prototype.url = "http://localhost:3000/api/users/sign_in";
 
+    Session.prototype.isSignedIn = function() {
+      return App.Persistence.getToken();
+    };
+
+    Session.prototype.token = function() {
+      return App.Persistence.getToken();
+    };
+
+    Session.prototype.createUserSession = function(login, token) {
+      return App.Persistence.createUserSession(login, token);
+    };
+
+    Session.prototype.checkLogin = function(uid, password) {
+      return $.ajax({
+        url: this.url,
+        type: "post",
+        data: {
+          uid: uid,
+          password: password
+        }
+      });
+    };
+
     return Session;
 
   })(Backbone.Model);

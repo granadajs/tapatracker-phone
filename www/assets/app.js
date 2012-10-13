@@ -50,47 +50,29 @@ b,c){var d;d=b&&b.hasOwnProperty("constructor")?b.constructor:function(){a.apply
 
 
 
-window.App ?= {}
+window.App = window.App || {};
 
 window.App.init = function () {
-  jQuery ->
-    router = new App.Router
-    Backbone.History.start()
-}
-
-window.App.PhoneGap = {
-    // Application Constructor
-    initialize: function() {
-        this.bindEvents();
-    },
-    // Bind Event Listeners
-    //
-    // Bind any events that are required on startup. Common events are:
-    // `load`, `deviceready`, `offline`, and `online`.
-    bindEvents: function() {
-        document.addEventListener('deviceready', this.onDeviceReady, false);
-    },
-    // deviceready Event Handler
-    //
-    // The scope of `this` is the event. In order to call the `receivedEvent`
-    // function, we must explicity call `app.receivedEvent(...);`
-    onDeviceReady: function() {
-        App.PhoneGap.receivedEvent('deviceready');
-        App.init();
-    },
-    // Update DOM on a Received Event
-    receivedEvent: function(id) {
-        var parentElement = document.getElementById(id);
-        var listeningElement = parentElement.querySelector('.listening');
-        var receivedElement = parentElement.querySelector('.received');
-
-        listeningElement.setAttribute('style', 'display:none;');
-        receivedElement.setAttribute('style', 'display:block;');
-
-        console.log('Received Event: ' + id);
-    }
+  jQuery(function () {
+    window.mainRouter = new App.MainRouter;
+    Backbone.history.start();
+  });
 };
 
+window.App.PhoneGap = function () {}
+
+App.PhoneGap.prototype.init = function () {
+  this.bindEvents();
+}
+
+App.PhoneGap.prototype.bindEvents = function () {
+  document.addEventListener('deviceready', this.onDeviceReady, false);
+}
+
+App.PhoneGap.prototype.onDeviceReady = function () {
+  App.init();
+}
+;
 (function() {
   this.JST || (this.JST = {});
   this.JST["backbone/templates/sign_in"] = function(__obj) {
@@ -143,6 +125,19 @@ window.App.PhoneGap = {
   };
 }).call(this);
 (function() {
+
+  App.Persistence = {
+    getToken: function() {
+      return window.localStorage.getItem('token');
+    },
+    createUserSession: function(login, token) {
+      window.localStorage.setItem('login', login);
+      return window.localStorage.setItem('token', token);
+    }
+  };
+
+}).call(this);
+(function() {
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -155,6 +150,29 @@ window.App.PhoneGap = {
     }
 
     Session.prototype.url = "http://localhost:3000/api/users/sign_in";
+
+    Session.prototype.isSignedIn = function() {
+      return App.Persistence.getToken();
+    };
+
+    Session.prototype.token = function() {
+      return App.Persistence.getToken();
+    };
+
+    Session.prototype.createUserSession = function(login, token) {
+      return App.Persistence.createUserSession(login, token);
+    };
+
+    Session.prototype.checkLogin = function(uid, password) {
+      return $.ajax({
+        url: this.url,
+        type: "post",
+        data: {
+          uid: uid,
+          password: password
+        }
+      });
+    };
 
     return Session;
 
@@ -196,7 +214,7 @@ window.App.PhoneGap = {
 
     return Tapas;
 
-  })(Backbone.Colleciton);
+  })(Backbone.Collection);
 
 }).call(this);
 (function() {
@@ -210,6 +228,38 @@ window.App.PhoneGap = {
     function SignInView() {
       return SignInView.__super__.constructor.apply(this, arguments);
     }
+
+    SignInView.prototype.events = {
+      "click input[type='submit']": 'signIn'
+    };
+
+    SignInView.prototype.template = JST['backbone/templates/sign_in'];
+
+    SignInView.prototype.initialize = function() {
+      return _.bindAll(this, 'render');
+    };
+
+    SignInView.prototype.render = function() {
+      var renderedHtml;
+      renderedHtml = this.template();
+      this.$el.html(renderedHtml);
+      return this;
+    };
+
+    SignInView.prototype.signIn = function(e) {
+      var $form, password, res, uid;
+      e.preventDefault();
+      $form = this.$el.find('form');
+      uid = $form.find('input[name="uid"]').val();
+      password = $form.find('input[name="password"]').val();
+      res = this.options.session.checkLogin(uid, password);
+      res.done(function(data) {
+        return this.mainRouter.navigate('/');
+      });
+      return res.error(function(err) {
+        return console.log("error", err.statusText);
+      });
+    };
 
     return SignInView;
 
@@ -225,37 +275,44 @@ window.App.PhoneGap = {
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  App.Router = (function(_super) {
+  App.MainRouter = (function(_super) {
 
-    __extends(Router, _super);
+    __extends(MainRouter, _super);
 
-    function Router() {
-      return Router.__super__.constructor.apply(this, arguments);
+    function MainRouter() {
+      return MainRouter.__super__.constructor.apply(this, arguments);
     }
 
-    Router.prototype.routes = {
-      "/": "index",
-      "/login": "login"
+    MainRouter.prototype.routes = {
+      "": "index",
+      "sign_in": "signIn"
     };
 
-    Router.prototype.index = function() {
-      var tapas, tapasView;
-      tapas = new Tapas;
-      tapasView = new TapasView({
-        collection: tapas,
-        el: $('.container')
-      });
-      return tapasView.fetch();
-    };
-
-    Router.prototype.login = function() {
+    MainRouter.prototype.index = function() {
+      var tapas, view;
       App.session = new App.Session;
       if (App.session && App.session.isSignedIn()) {
-        return this.navigate('/');
+        tapas = new Tapas;
+        view = new TapasView({
+          collection: tapas
+        });
+        $('.container').html(view.render().el);
+        return tapasView.fetch();
+      } else {
+        return this.navigate('sign_in');
       }
     };
 
-    return Router;
+    MainRouter.prototype.signIn = function() {
+      var view;
+      App.session = new App.Session;
+      view = new App.SignInView({
+        session: App.session
+      });
+      return $('.container').html(view.render().el);
+    };
+
+    return MainRouter;
 
   })(Backbone.Router);
 
