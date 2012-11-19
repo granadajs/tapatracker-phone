@@ -13,21 +13,19 @@
     MainRouter.prototype.routes = {
       "": "index",
       "sign_in": "signIn",
-      "sign_up": "signUp",
-      "tapas": "tapas"
+      "sign_up": "signUp"
     };
 
     MainRouter.prototype.index = function() {
-      App.session = new App.Session;
-      if (App.session && App.session.isSignedIn()) {
-        return this.navigate('tapas', {
-          trigger: true
-        });
-      } else {
-        return this.navigate('sign_in', {
-          trigger: true
-        });
-      }
+      var view;
+      App.location = new App.Location;
+      App.tapas = new App.Tapas;
+      view = new App.TapasView({
+        model: App.location,
+        collection: App.tapas
+      });
+      $('.container').html(view.render().el);
+      return App.tapas.fetch();
     };
 
     MainRouter.prototype.signIn = function() {
@@ -48,16 +46,6 @@
         router: this
       });
       return $('.container').html(view.render().el);
-    };
-
-    MainRouter.prototype.tapas = function() {
-      var view;
-      App.tapas = new App.Tapas;
-      view = new App.TapasView({
-        collection: App.tapas
-      });
-      $('.container').html(view.render().el);
-      return App.tapas.fetch();
     };
 
     return MainRouter;

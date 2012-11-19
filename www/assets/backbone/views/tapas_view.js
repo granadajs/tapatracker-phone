@@ -14,7 +14,8 @@
 
     TapasView.prototype.initialize = function() {
       _.bindAll(this, 'render');
-      return this.collection.on('reset', this.render, this);
+      this.collection.on('reset', this.render, this);
+      return this.model.on('change', this.showPosition, this);
     };
 
     TapasView.prototype.render = function() {
@@ -24,6 +25,10 @@
       });
       this.$el.html(renderedHtml);
       return this;
+    };
+
+    TapasView.prototype.showPosition = function() {
+      return console.log(this.model.get('position'));
     };
 
     return TapasView;

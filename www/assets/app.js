@@ -240,6 +240,39 @@ App.PhoneGap.prototype.onDeviceReady = function () {
   };
 }).call(this);
 (function() {
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  App.Location = (function(_super) {
+
+    __extends(Location, _super);
+
+    function Location() {
+      this.onSuccess = __bind(this.onSuccess, this);
+
+      this.getCurrent = __bind(this.getCurrent, this);
+      return Location.__super__.constructor.apply(this, arguments);
+    }
+
+    Location.prototype.getCurrent = function() {
+      return navigator.geolocation.getCurrentPosition(this.onSuccess, this.onError);
+    };
+
+    Location.prototype.onSuccess = function(position) {
+      return this.set('position', position);
+    };
+
+    Location.prototype.onError = function(err) {
+      return alert(err);
+    };
+
+    return Location;
+
+  })(Backbone.Model);
+
+}).call(this);
+(function() {
 
   App.Persistence = {
     getToken: function() {
@@ -483,7 +516,8 @@ App.PhoneGap.prototype.onDeviceReady = function () {
 
     TapasView.prototype.initialize = function() {
       _.bindAll(this, 'render');
-      return this.collection.on('reset', this.render, this);
+      this.collection.on('reset', this.render, this);
+      return this.model.on('change', this.showPosition, this);
     };
 
     TapasView.prototype.render = function() {
@@ -493,6 +527,10 @@ App.PhoneGap.prototype.onDeviceReady = function () {
       });
       this.$el.html(renderedHtml);
       return this;
+    };
+
+    TapasView.prototype.showPosition = function() {
+      return console.log(this.model.get('position'));
     };
 
     return TapasView;
@@ -515,21 +553,19 @@ App.PhoneGap.prototype.onDeviceReady = function () {
     MainRouter.prototype.routes = {
       "": "index",
       "sign_in": "signIn",
-      "sign_up": "signUp",
-      "tapas": "tapas"
+      "sign_up": "signUp"
     };
 
     MainRouter.prototype.index = function() {
-      App.session = new App.Session;
-      if (App.session && App.session.isSignedIn()) {
-        return this.navigate('tapas', {
-          trigger: true
-        });
-      } else {
-        return this.navigate('sign_in', {
-          trigger: true
-        });
-      }
+      var view;
+      App.location = new App.Location;
+      App.tapas = new App.Tapas;
+      view = new App.TapasView({
+        model: App.location,
+        collection: App.tapas
+      });
+      $('.container').html(view.render().el);
+      return App.tapas.fetch();
     };
 
     MainRouter.prototype.signIn = function() {
@@ -550,16 +586,6 @@ App.PhoneGap.prototype.onDeviceReady = function () {
         router: this
       });
       return $('.container').html(view.render().el);
-    };
-
-    MainRouter.prototype.tapas = function() {
-      var view;
-      App.tapas = new App.Tapas;
-      view = new App.TapasView({
-        collection: App.tapas
-      });
-      $('.container').html(view.render().el);
-      return App.tapas.fetch();
     };
 
     return MainRouter;
