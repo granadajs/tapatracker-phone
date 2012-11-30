@@ -1,50 +1,134 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Capture Image</title>
+    <title>Capture Photo</title>
 
-    <script type="text/javascript" charset="utf-8" src="cordova-2.2.0.js"></script>
-    <script type="text/javascript" charset="utf-8" src="json2.js"></script>
-    <script type="text/javascript" src="assets/app.js"></script>
     <link rel="stylesheet" href="assets/app.css" />
-    </head>
-    <body>
-        <button onclick="captureImage();">Capture Image</button> <br>
+    <script type="text/javascript" charset="utf-8" src="cordova-2.2.0.js"></script>
+    <script type="text/javascript" src="assets/app.js"></script>
     <script type="text/javascript" charset="utf-8">
 
-    // Called when capture operation is finished
+    var pictureSource;   // picture source
+    var destinationType; // sets the format of returned value
+
+    // Wait for Cordova to connect with the device
     //
-    function captureSuccess(mediaFiles) {
-        alert("HERE IN SUCCESS")
+    document.addEventListener("deviceready",onDeviceReady,false);
+
+    // Cordova is ready to be used!
+    //
+    
+    function onDeviceReady() {
+        pictureSource=navigator.camera.PictureSourceType;
+        destinationType=navigator.camera.DestinationType;
+        var element = document.getElementById('deviceProperties');
+
+        element.innerHTML = 'Device Name: '     + device.name     + '<br />' +
+                            'Device Cordova: '  + device.cordova  + '<br />' +
+                            'Device Platform: ' + device.platform + '<br />' +
+                            'Device UUID: '     + device.uuid     + '<br />' +
+                            'Device Version: '  + device.version  + '<br />';
     }
 
-    // Called if something bad happens.
+    // Called when a photo is successfully retrieved
     //
-    function captureError(error) {
-        alert("HERE IN ERROR " + error)
-        var msg = 'An error occurred during capture: ' + error.code;
-        navigator.notification.alert(msg, null, 'Uh oh!');
+    function onPhotoDataSuccess(imageData) {
+      // Uncomment to view the base64 encoded image data
+      // console.log(imageData);
+      alert(imageData);
+
+
+
+      // Get image handle
+      //
+      var smallImage = document.getElementById('smallImage');
+
+      // Unhide image elements
+      //
+      smallImage.style.display = 'block';
+
+      // Show the captured photo
+      // The inline CSS rules are used to resize the image
+      //
+      smallImage.src = imageData;
+    }
+
+    // Called when a photo is successfully retrieved
+    //
+    function onPhotoURISuccess(imageURI, location) {
+      // Uncomment to view the image file URI
+
+      // Get image handle
+      //
+
+      var largeImage = document.getElementById('largeImage');
+
+
+      // Unhide image elements
+      //
+      largeImage.style.display = 'block';
+
+      // Show the captured photo
+      // The inline CSS rules are used to resize the image
+      //
+      largeImage.src = imageURI;
     }
 
     // A button will call this function
     //
-    function captureImage() {
-      alert("HERE IN CAPTURE IMAGE")
-      navigator.camera.getPicture(function (images) {
-          console.log(images);
-          alert(images);
-      });
-      // Launch device camera application,
-      // allowing user to capture up to 2 images
-      alert(navigator.device.capture)
-      navigator.device.capture.captureImage(captureSuccess, captureError);
+    function capturePhoto() {
+      // Take picture using device camera and retrieve image as base64-encoded string
+      navigator.camera.getPicture(onPhotoDataSuccess, onFail, { quality: 50,
+        destinationType: destinationType.FILE_URI });
     }
 
-    // Upload files to server
-    function uploadFile(mediaFile) {
-      alert("hello from upload")
+    // A button will call this function
+    //
+    function capturePhotoEdit() {
+      // Take picture using device camera, allow edit, and retrieve image as base64-encoded string
+      navigator.camera.getPicture(onPhotoDataSuccess, onFail, { quality: 20, allowEdit: true,
+        destinationType: destinationType.DATA_URL });
+    }
+
+    // A button will call this function
+    //
+    function getPhoto(source) {
+      // Retrieve image file location from specified source
+      navigator.camera.getPicture(onPhotoURISuccess, onFail, { quality: 50,
+        destinationType: destinationType.FILE_URI,
+        sourceType: source });
+    }
+
+    // Called if something bad happens.
+    //
+    function onFail(message) {
+      alert('Failed because: ' + message);
     }
 
     </script>
-    </body>
+    <title>TapaTracker</title>
+  </head>
+  <body>
+    <div id="home">
+      <div class="toolbar">
+        <h1>TapaTracker</h1>
+      </div>
+      <ul class='edgetoedge'>
+        <li>
+          <a href="#" onclick="capturePhoto();">Capture Photo</a>
+        </li>
+        <li>
+          <a href="#" onclick="capturePhotoEdit();">Capture Editable Photo</a>
+        </li>
+        <li>
+          <a href="#" onclick="getPhoto(pictureSource.PHOTOLIBRARY);">From Photo Library</a>
+        </li>
+        <li>
+          <a href="#" onclick="getPhoto(pictureSource.SAVEDPHOTOALBUM);">From Photo Album</a>
+        </li>
+      </ul>
+      <img style="display:none;width:60px;height:60px;" id="smallImage" src="" />
+      <img style="display:none;" id="largeImage" src="" />
+    </div>
+  </body>
 </html>
