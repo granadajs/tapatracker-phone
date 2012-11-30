@@ -3,11 +3,13 @@
   <head>
     <title>Capture Photo</title>
 
+    <link rel="stylesheet" href="assets/app.css" />
     <script type="text/javascript" charset="utf-8" src="cordova-2.2.0.js"></script>
+    <script type="text/javascript" src="assets/app.js"></script>
     <script type="text/javascript" charset="utf-8">
 
     var pictureSource;   // picture source
-    var destinationType; // sets the format of returned value 
+    var destinationType; // sets the format of returned value
 
     // Wait for Cordova to connect with the device
     //
@@ -21,10 +23,10 @@
         destinationType=navigator.camera.DestinationType;
         var element = document.getElementById('deviceProperties');
 
-        element.innerHTML = 'Device Name: '     + device.name     + '<br />' + 
-                            'Device Cordova: '  + device.cordova  + '<br />' + 
-                            'Device Platform: ' + device.platform + '<br />' + 
-                            'Device UUID: '     + device.uuid     + '<br />' + 
+        element.innerHTML = 'Device Name: '     + device.name     + '<br />' +
+                            'Device Cordova: '  + device.cordova  + '<br />' +
+                            'Device Platform: ' + device.platform + '<br />' +
+                            'Device UUID: '     + device.uuid     + '<br />' +
                             'Device Version: '  + device.version  + '<br />';
     }
 
@@ -34,8 +36,8 @@
       // Uncomment to view the base64 encoded image data
       // console.log(imageData);
       alert(imageData);
-      
-      
+
+
 
       // Get image handle
       //
@@ -54,14 +56,14 @@
     // Called when a photo is successfully retrieved
     //
     function onPhotoURISuccess(imageURI, location) {
-      // Uncomment to view the image file URI 
+      // Uncomment to view the image file URI
 
       // Get image handle
       //
-      
+
       var largeImage = document.getElementById('largeImage');
 
-		
+
       // Unhide image elements
       //
       largeImage.style.display = 'block';
@@ -83,7 +85,7 @@
     // A button will call this function
     //
     function capturePhotoEdit() {
-      // Take picture using device camera, allow edit, and retrieve image as base64-encoded string  
+      // Take picture using device camera, allow edit, and retrieve image as base64-encoded string
       navigator.camera.getPicture(onPhotoDataSuccess, onFail, { quality: 20, allowEdit: true,
         destinationType: destinationType.DATA_URL });
     }
@@ -92,13 +94,13 @@
     //
     function getPhoto(source) {
       // Retrieve image file location from specified source
-      navigator.camera.getPicture(onPhotoURISuccess, onFail, { quality: 50, 
+      navigator.camera.getPicture(onPhotoURISuccess, onFail, { quality: 50,
         destinationType: destinationType.FILE_URI,
         sourceType: source });
     }
 
     // Called if something bad happens.
-    // 
+    //
     function onFail(message) {
       alert('Failed because: ' + message);
     }
@@ -111,13 +113,22 @@
       <div class="toolbar">
         <h1>TapaTracker</h1>
       </div>
-      <button onclick="capturePhoto();">Capture Photo</button> <br>
-      <button onclick="capturePhotoEdit();">Capture Editable Photo</button> <br>
-      <button onclick="getPhoto(pictureSource.PHOTOLIBRARY);">From Photo Library</button><br>
-      <button onclick="getPhoto(pictureSource.SAVEDPHOTOALBUM);">From Photo Album</button><br>
+      <ul class='edgetoedge'>
+        <li>
+          <a href="#" onclick="capturePhoto();">Capture Photo</a>
+        </li>
+        <li>
+          <a href="#" onclick="capturePhotoEdit();">Capture Editable Photo</a>
+        </li>
+        <li>
+          <a href="#" onclick="getPhoto(pictureSource.PHOTOLIBRARY);">From Photo Library</a>
+        </li>
+        <li>
+          <a href="#" onclick="getPhoto(pictureSource.SAVEDPHOTOALBUM);">From Photo Album</a>
+        </li>
+      </ul>
       <img style="display:none;width:60px;height:60px;" id="smallImage" src="" />
       <img style="display:none;" id="largeImage" src="" />
-      <p id="deviceProperties">Loading device properties...</p>
     </div>
   </body>
 </html>
