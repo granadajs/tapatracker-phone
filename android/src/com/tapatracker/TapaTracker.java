@@ -19,6 +19,7 @@
 
 package com.tapatracker;
 
+import org.apache.cordova.DroidGap;
 import android.app.Activity;
 import android.os.Bundle;
 import org.apache.cordova.*;

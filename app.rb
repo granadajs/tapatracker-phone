@@ -7,6 +7,11 @@ before do
   headers['Access-Control-Allow-Origin'] = '*'
 end
 
+# POST Root
+post "/api" do
+  @logger.debug params.inspect
+end
+
 # POST Create User
 post "/api/users" do
   @logger.debug params.inspect
